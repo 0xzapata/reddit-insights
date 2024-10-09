@@ -8,7 +8,7 @@ import { SubredditTabs } from "@/components/SubredditTabs"
 export default function SubredditPage() {
   const params = useParams()
   const router = useRouter()
-  const subredditName = params.subreddit as string
+  const subredditName = params?.subreddit as string
 
   return (
     <div className="container mx-auto py-8">

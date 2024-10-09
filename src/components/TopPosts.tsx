@@ -9,18 +9,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { ArrowUpDown } from "lucide-react"
+import type { RedditPost } from "@/app/types"
+import { CategoryBadge } from "@/components/CategoryBadge"
 
-interface RedditPost {
-  title: string
-  score: number
-  url: string
-  created_utc: number
-  num_comments: number
-}
+type SortKey = 'score' | 'numComments' | 'createdAt';
 
 export function TopPosts() {
   const [posts, setPosts] = useState<RedditPost[]>([])
   const [loading, setLoading] = useState(true)
+  const [sortKey, setSortKey] = useState<SortKey>('score')
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const { subreddit } = useParams()
 
   useEffect(() => {
@@ -43,6 +43,61 @@ export function TopPosts() {
     fetchPosts()
   }, [subreddit])
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    if (Number.isNaN(date.getTime())) return 'Invalid date'
+    try {
+      return `${formatDistanceToNow(date)} ago`
+    } catch (error) {
+      console.error('Error formatting date:', error)
+      return 'Invalid date'
+    }
+  }
+
+  const sortPosts = (a: RedditPost, b: RedditPost) => {
+    let valueA: number | string
+		let valueB: number | string;
+
+    switch (sortKey) {
+      case 'score':
+      case 'numComments':
+        valueA = a[sortKey];
+        valueB = b[sortKey];
+        break;
+      case 'createdAt':
+        valueA = new Date(a.createdAt).getTime();
+        valueB = new Date(b.createdAt).getTime();
+        break;
+      default:
+        return 0;
+    }
+
+    if (valueA < valueB) return sortOrder === 'asc' ? -1 : 1;
+    if (valueA > valueB) return sortOrder === 'asc' ? 1 : -1;
+    return 0;
+  }
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortKey(key)
+      setSortOrder('desc')
+    }
+  }
+
+  const sortedPosts = [...posts].sort(sortPosts)
+
+  const getCategories = (post: RedditPost) => {
+    return (
+      <div className="flex flex-wrap">
+        {Object.entries(post.categories).map(([category, value]) => (
+          <CategoryBadge key={category} category={category} value={value} />
+        ))}
+      </div>
+    )
+  }
+
   if (loading) {
     return <div>Loading...</div>
   }
@@ -54,13 +109,26 @@ export function TopPosts() {
         <TableHeader>
           <TableRow>
             <TableHead>Title</TableHead>
-            <TableHead>Score</TableHead>
-            <TableHead>Comments</TableHead>
-            <TableHead>Posted</TableHead>
+            <TableHead>
+              <Button variant="ghost" onClick={() => toggleSort('score')}>
+                Score <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </TableHead>
+            <TableHead>
+              <Button variant="ghost" onClick={() => toggleSort('numComments')}>
+                Comments <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </TableHead>
+            <TableHead>
+              <Button variant="ghost" onClick={() => toggleSort('createdAt')}>
+                Posted <ArrowUpDown className="ml-2 h-4 w-4" />
+              </Button>
+            </TableHead>
+            <TableHead>Categories</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {posts.map((post) => (
+          {sortedPosts.map((post) => (
             <TableRow key={post.url}>
               <TableCell>
                 <a href={post.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
@@ -68,8 +136,9 @@ export function TopPosts() {
                 </a>
               </TableCell>
               <TableCell>{post.score}</TableCell>
-              <TableCell>{post.num_comments}</TableCell>
-              <TableCell>{formatDistanceToNow(new Date(post.created_utc * 1000))} ago</TableCell>
+              <TableCell>{post.numComments}</TableCell>
+              <TableCell>{formatDate(post.createdAt)}</TableCell>
+              <TableCell>{getCategories(post)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

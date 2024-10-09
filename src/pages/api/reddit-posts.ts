@@ -1,6 +1,8 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next/types'
 import snoowrap from 'snoowrap'
 import { subDays } from 'date-fns'
+import type { CategorizedPost, SnoowrapSubmission } from '@/app/types'
+import { categorizePost } from '@/lib/openai'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { subreddit } = req.query
@@ -22,11 +24,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const posts = await r
       .getSubreddit(subreddit)
       .getTop({ time: "day", limit: 100 })
-      .filter((post) => new Date(post.created_utc * 1000) >= oneDayAgo)
+      .filter((post: SnoowrapSubmission) => {
+        const createdAt = new Date(post.created_utc * 1000);
+        return createdAt >= oneDayAgo;
+      })
 
-    res.status(200).json(posts)
+    const categorizedPosts: CategorizedPost[] = await Promise.all(
+      posts.map(async (post): Promise<CategorizedPost> => {
+        const redditPost = {
+          title: post.title,
+          content: post.selftext,
+          score: post.score,
+          numComments: post.num_comments,
+          createdAt: new Date(post.created_utc * 1000).toISOString(),
+          url: post.url,
+        };
+        const categories = await categorizePost(redditPost);
+        return {
+          ...redditPost,
+          categories,
+        };
+      })
+    );
+
+    res.status(200).json(categorizedPosts)
   } catch (error) {
-    console.error('Error fetching Reddit posts:', error)
-    res.status(500).json({ error: 'Failed to fetch Reddit posts' })
+    console.error('Error fetching and categorizing Reddit posts:', error)
+    res.status(500).json({ error: 'Failed to fetch and categorize Reddit posts' })
   }
 }
