@@ -15,7 +15,7 @@ const categoryDescriptions: Record<keyof PostCategory, string> = {
 export function Themes() {
   const [posts, setPosts] = useState<CategorizedPost[]>([])
   const [loading, setLoading] = useState(true)
-  const [setSelectedCategory] = useState<keyof PostCategory | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<keyof PostCategory | null>(null)
   const { subreddit } = useParams()
 
   useEffect(() => {
