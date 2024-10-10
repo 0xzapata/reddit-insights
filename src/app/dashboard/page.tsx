@@ -1,20 +1,35 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { SubredditCard } from "@/components/SubredditCard"
 import { AddSubredditModal } from "@/components/AddSubredditModal"
 
-// This would typically come from a database or API
-const initialSubreddits = [
-  { name: "ollama", description: "An open-source AI model" },
-  { name: "openai", description: "OpenAI's official subreddit" },
-]
+interface Subreddit {
+  name: string;
+  description: string;
+}
 
 export default function DashboardPage() {
-  const [subreddits, setSubreddits] = useState(initialSubreddits)
+  const [subreddits, setSubreddits] = useState<Subreddit[]>([])
+
+  useEffect(() => {
+    const storedSubreddits = localStorage.getItem('subreddits')
+    if (storedSubreddits) {
+      setSubreddits(JSON.parse(storedSubreddits))
+    }
+  }, [])
 
   const handleAddSubreddit = (name: string, description: string) => {
-    setSubreddits([...subreddits, { name, description }])
+    const newSubreddit = { name, description }
+    const updatedSubreddits = [...subreddits, newSubreddit]
+    setSubreddits(updatedSubreddits)
+    localStorage.setItem('subreddits', JSON.stringify(updatedSubreddits))
+  }
+
+  const handleDeleteSubreddit = (name: string) => {
+    const updatedSubreddits = subreddits.filter(subreddit => subreddit.name !== name)
+    setSubreddits(updatedSubreddits)
+    localStorage.setItem('subreddits', JSON.stringify(updatedSubreddits))
   }
 
   return (
@@ -29,6 +44,7 @@ export default function DashboardPage() {
             key={subreddit.name}
             name={subreddit.name}
             description={subreddit.description}
+            onDelete={() => handleDeleteSubreddit(subreddit.name)}
           />
         ))}
       </div>
