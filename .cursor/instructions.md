@@ -99,7 +99,7 @@ The project aims for minimal files without compromising clarity.
 
 ```
 
-reddit-insights
+reddit-analytics
 ├── README.md
 ├── biome.json
 ├── components.json
@@ -165,9 +165,9 @@ interface RedditPost {
 
 // Initialize the Snoowrap client
 const r = new snoowrap({
-  userAgent: 'reddit_user_agent',
-  clientId: 'reddit_client_id',
-  clientSecret: 'reddit_client_secret',
+  userAgent: 'reddit-insights-app',
+  clientId: 'your_client_id',
+  clientSecret: 'your_client_secret',
   username: 'your_username',
   password: 'your_password'
 });

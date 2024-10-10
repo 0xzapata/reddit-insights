@@ -1,6 +1,6 @@
 export const siteConfig = {
-  name: "Boilerplate107",
-  description: "Get started with Nextjs, Shadcn UI, TailwindCSS, Clerk, Drizzle ORM, and Turso DB.",
-  url: "https://boilerplate107.vercel.app",
-  github: "https://github.com/noelrohi/boilerplate107",
+  name: "Reddit Analytics",
+  description: "Analyze Reddit data with ease.",
+  url: "https://reddit.buildthiswithai.com",
+  github: "https://github.com/buildthiswithai/reddit-analytics",
 } as const;
