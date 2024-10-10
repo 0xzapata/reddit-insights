@@ -2,35 +2,31 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { UserButton } from "@clerk/nextjs";
-import { useTheme } from "next-themes";
+import { UserButton, useAuth } from "@clerk/nextjs";
 
 export function NavBar() {
-  const { theme } = useTheme();
-
-  // Calculate the lighter background color
-  const getBgColor = () => {
-    if (theme === 'dark') {
-      return 'bg-neutral-900'; // 20% lighter than typical dark mode bg
-    }
-    return 'bg-neutral-100'; // 20% darker than typical light mode bg
-  };
+  const { isSignedIn } = useAuth();
 
   return (
-    <nav className={`${getBgColor()} p-4 flex justify-between items-center`}>
-      <div className='container flex mx-auto justify-between'>
-			<div className="flex items-center">
-        {/* Replace with your actual logo */}
-        <span className="text-2xl font-bold">Logo</span>
-      </div>
-      <div className="flex items-center space-x-4">
-        <Link href="/dashboard" className="hover:text-gray-300">
-          My Desk
+    <nav className='bg-black text-white p-4'>
+      <div className='container mx-auto flex justify-between items-center'>
+        <Link href="/" className="flex items-center">
+          <span className="text-xl font-bold">Reddit Analytics</span>
         </Link>
+          {isSignedIn ? (
+             <div className="flex items-center space-x-4">
+
+              <Link href="/dashboard" className="hover:text-gray-300">
+                My Desk
+              </Link>
+              <UserButton afterSignOutUrl="/"/>
+							</div>
+          ) : (
+            <Link href="/sign-in" className="hover:text-gray-300">
+              Sign In
+            </Link>
+          )}
       </div>
-      <UserButton afterSignOutUrl="/"/>
-			</div>
-			
     </nav>
   );
 }
