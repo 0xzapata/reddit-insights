@@ -1,14 +1,15 @@
-import type { NextApiRequest, NextApiResponse } from 'next/types'
+import { type NextRequest, NextResponse } from 'next/server'
 import snoowrap from 'snoowrap'
 import { subDays } from 'date-fns'
 import type { CategorizedPost, SnoowrapSubmission } from '@/app/types'
 import { categorizePost } from '@/lib/openai'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { subreddit } = req.query
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams
+  const subreddit = searchParams.get('subreddit')
 
-  if (!subreddit || typeof subreddit !== 'string') {
-    return res.status(400).json({ error: 'Subreddit name is required' })
+  if (!subreddit) {
+    return NextResponse.json({ error: 'Subreddit name is required' }, { status: 400 })
   }
 
   try {
@@ -47,9 +48,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       })
     );
 
-    res.status(200).json(categorizedPosts)
+    return NextResponse.json(categorizedPosts)
   } catch (error) {
     console.error('Error fetching and categorizing Reddit posts:', error)
-    res.status(500).json({ error: 'Failed to fetch and categorize Reddit posts' })
+    return NextResponse.json({ error: 'Failed to fetch and categorize Reddit posts' }, { status: 500 })
   }
 }
