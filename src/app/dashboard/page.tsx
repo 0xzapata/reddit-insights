@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { SubredditCard } from "@/components/SubredditCard"
 import { AddSubredditModal } from "@/components/AddSubredditModal"
+import { NavBar } from "@/components/NavBar";
 
 interface Subreddit {
   name: string;
@@ -34,6 +35,7 @@ export default function DashboardPage() {
 
   return (
     <div className="container mx-auto py-8">
+			<NavBar/>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Available Subreddits</h1>
         <AddSubredditModal onAddSubreddit={handleAddSubreddit} />
