@@ -16,6 +16,9 @@ import { CategoryBadge } from "@/components/CategoryBadge"
 
 type SortKey = 'score' | 'numComments' | 'createdAt';
 
+const STORAGE_KEY = 'redditPosts';
+const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 export function TopPosts() {
   const [posts, setPosts] = useState<RedditPost[]>([])
   const [loading, setLoading] = useState(true)
@@ -26,12 +29,27 @@ export function TopPosts() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        const storedData = localStorage.getItem(`${STORAGE_KEY}_${subreddit}`);
+        const parsedData = storedData ? JSON.parse(storedData) : null;
+
+        if (parsedData && Date.now() - parsedData.lastUpdated < UPDATE_INTERVAL) {
+          setPosts(parsedData.posts);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch(`/api/reddit-posts?subreddit=${subreddit}`)
         if (!response.ok) {
           throw new Error('Failed to fetch posts')
         }
         const fetchedPosts = await response.json()
         setPosts(fetchedPosts)
+
+        // Save to local storage
+        localStorage.setItem(`${STORAGE_KEY}_${subreddit}`, JSON.stringify({
+          posts: fetchedPosts,
+          lastUpdated: Date.now()
+        }));
       } catch (error) {
         console.error('Error fetching posts:', error)
         // Handle error (e.g., show error message to user)

@@ -5,6 +5,9 @@ import { ThemeCard } from "@/components/ThemeCard"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+const STORAGE_KEY = 'redditPosts';
+const UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
 const categoryDescriptions: Record<keyof PostCategory, string> = {
   solutionRequests: "Posts where people are seeking solutions for problems",
   painAndAnger: "Posts where people are expressing pains or anger",
@@ -21,12 +24,27 @@ export function Themes() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
+        const storedData = localStorage.getItem(`${STORAGE_KEY}_${subreddit}`);
+        const parsedData = storedData ? JSON.parse(storedData) : null;
+
+        if (parsedData && Date.now() - parsedData.lastUpdated < UPDATE_INTERVAL) {
+          setPosts(parsedData.posts);
+          setLoading(false);
+          return;
+        }
+
         const response = await fetch(`/api/reddit-posts?subreddit=${subreddit}`)
         if (!response.ok) {
           throw new Error('Failed to fetch posts')
         }
         const fetchedPosts = await response.json()
         setPosts(fetchedPosts)
+
+        // Save to local storage
+        localStorage.setItem(`${STORAGE_KEY}_${subreddit}`, JSON.stringify({
+          posts: fetchedPosts,
+          lastUpdated: Date.now()
+        }));
       } catch (error) {
         console.error('Error fetching posts:', error)
       } finally {

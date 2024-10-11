@@ -15,10 +15,6 @@ export function NavBar() {
         </Link>
           {isSignedIn ? (
              <div className="flex items-center space-x-4">
-
-              <Link href="/dashboard" className="hover:text-gray-300">
-                My Desk
-              </Link>
               <UserButton afterSignOutUrl="/"/>
 							</div>
           ) : (
