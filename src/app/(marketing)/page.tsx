@@ -1,7 +1,16 @@
-import DashboardPage from "../dashboard/page";
+import {
+  Features,
+  GetStartedSection,
+  Hero,
+  MarketingLayout,
+} from "@/components/layout/marketing-layout";
 
 export default function Page() {
   return (
-    <DashboardPage />
+    <MarketingLayout>
+      <Hero />
+      <Features />
+      <GetStartedSection />
+    </MarketingLayout>
   );
 }

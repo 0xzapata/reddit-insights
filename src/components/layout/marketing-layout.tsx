@@ -6,18 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { siteConfig } from "@/constants";
 import { cn } from "@/lib/utils";
-import {
-  ArrowRight,
-  Check,
-  ChevronRight,
-  Code,
-  Copy,
-  Database,
-  Lock,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, ChevronRight, Code, Database, Lock, Zap } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 import { MarketingFooter } from "./marketing-footer";
 import { MarketingHeader } from "./marketing-header";
 
@@ -32,17 +22,6 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
 }
 
 export function Hero() {
-  const [copied, setCopied] = useState(false);
-  const handleCopy = () => {
-    setCopied(true);
-    navigator.clipboard.writeText(
-      `npx create-next-app --example ${siteConfig.github}`,
-    );
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
-  };
-  const Icon = copied ? Check : Copy;
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
       <div className="px-4 md:px-6">
@@ -50,24 +29,14 @@ export function Hero() {
           <div className="space-y-2">
             <IntroducingButton>Introducing {siteConfig.name}</IntroducingButton>
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-              Next-Gen Web Development Boilerplate
+              Your personal Reddit research app
             </h1>
             <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
-              Jumpstart your project with our powerful stack: Next.js, shadcn,
-              Drizzle ORM, Turso DB, Tailwind CSS, and Clerk Auth for seamless
-              authentication.
+              Explore any niche. Discover pain points, content opportunities, and what solutions
+              people are eager to pay for.
             </p>
           </div>
           <div className="space-x-4">
-            <Button
-              variant="outline"
-              className="max-w-[280px] truncate font-mono text-sm inline-flex justify-around"
-              onClick={handleCopy}
-            >
-              <span className="text-muted-foreground mr-2">$</span> npx
-              create-next-app ...
-              <Icon className="ml-2 h-4 w-4" />
-            </Button>
             <Link href="/dashboard">
               <RainbowButton>Get Started</RainbowButton>
             </Link>
@@ -89,48 +58,36 @@ export function Features() {
           <Card>
             <CardHeader>
               <Zap className="h-10 w-10 mb-2 text-primary" />
-              <CardTitle>Next.js</CardTitle>
+              <CardTitle>Ideate Startups</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                React framework for production-grade applications with
-                server-side rendering and static site generation.
+                Generate innovative startup ideas using AI-powered brainstorming tools and market
+                trend analysis.
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
               <Code className="h-10 w-10 mb-2 text-primary" />
-              <CardTitle>shadcn</CardTitle>
+              <CardTitle>Validate Products</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                Beautifully designed components that you can copy and paste into
-                your apps.
+                Test and refine your product concepts with user feedback, market research, and
+                prototype testing tools.
               </p>
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
               <Database className="h-10 w-10 mb-2 text-primary" />
-              <CardTitle>Drizzle ORM & Turso DB</CardTitle>
+              <CardTitle>Find Sales Leads</CardTitle>
             </CardHeader>
             <CardContent>
               <p>
-                TypeScript ORM for SQL databases with Turso's distributed SQLite
-                for global, low-latency data access.
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Lock className="h-10 w-10 mb-2 text-primary" />
-              <CardTitle>Clerk</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>
-                Secure and easy-to-implement authentication solution, providing
-                a seamless login experience for your users.
+                Discover and qualify potential customers using our advanced lead generation and CRM
+                integration features.
               </p>
             </CardContent>
           </Card>
@@ -150,9 +107,8 @@ export function WhyChooseSection() {
               Why Choose Our Boilerplate?
             </h2>
             <p className="text-gray-500 dark:text-gray-400">
-              Our boilerplate combines the best of modern web development tools
-              to give you a head start on your next project. Here's what makes
-              it special:
+              Our boilerplate combines the best of modern web development tools to give you a head
+              start on your next project. Here's what makes it special:
             </p>
             <ul className="space-y-2">
               <li className="flex items-center">
@@ -165,9 +121,7 @@ export function WhyChooseSection() {
               </li>
               <li className="flex items-center">
                 <Database className="h-5 w-5 mr-2 text-primary" />
-                <span>
-                  Efficient data management with Drizzle ORM and Turso DB
-                </span>
+                <span>Efficient data management with Drizzle ORM and Turso DB</span>
               </li>
               <li className="flex items-center">
                 <Lock className="h-5 w-5 mr-2 text-primary" />
@@ -204,17 +158,15 @@ export function GetStartedSection() {
       <div className="px-4 md:px-6">
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-              Get Started Today
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Get Started Today</h2>
             <p className="mx-auto max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-              Start building your next project with our powerful boilerplate.
-              It's free and open source.
+              Start finding pain points, content opportunities, and what solutions people are eager
+              to pay for.
             </p>
           </div>
           <Button asChild size="lg">
-            <Link href={siteConfig.github} target="_blank">
-              Clone Repository <ArrowRight className="ml-2 h-4 w-4" />
+            <Link href="/dashboard">
+              Lets find that goldmine <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>
