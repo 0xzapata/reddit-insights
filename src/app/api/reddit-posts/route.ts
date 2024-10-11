@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
-import snoowrap from 'snoowrap'
+import snoowrap, { type Listing, type Submission } from 'snoowrap'
 import { subDays } from 'date-fns'
-import type { CategorizedPost, SnoowrapSubmission } from '@/app/types'
+import type { CategorizedPost, RedditPostPartial } from '@/app/types'
 import { categorizePost } from '@/lib/openai'
 
 export async function GET(request: NextRequest) {
@@ -25,14 +25,14 @@ export async function GET(request: NextRequest) {
     const posts = await r
       .getSubreddit(subreddit)
       .getTop({ time: "day", limit: 100 })
-      .filter((post: SnoowrapSubmission) => {
+      .then((posts: Listing<Submission>) => posts.filter((post: Submission) => {
         const createdAt = new Date(post.created_utc * 1000);
         return createdAt >= oneDayAgo;
-      })
+      }))
 
     const categorizedPosts: CategorizedPost[] = await Promise.all(
       posts.map(async (post): Promise<CategorizedPost> => {
-        const redditPost = {
+        const redditPost: RedditPostPartial = {
           title: post.title,
           content: post.selftext,
           score: post.score,
@@ -43,7 +43,12 @@ export async function GET(request: NextRequest) {
         const categories = await categorizePost(redditPost);
         return {
           ...redditPost,
-          categories,
+          categories: categories || {
+            solutionRequests: false,
+            painAndAnger: false,
+            adviceRequests: false,
+            moneyTalk: false,
+          },
         };
       })
     );
