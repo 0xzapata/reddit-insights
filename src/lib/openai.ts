@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { z } from "zod";
 import { zodResponseFormat } from "openai/helpers/zod";
-import type { RedditPost } from "@/app/types";
+import type { RedditPostPartial } from "@/app/types";
 
 const PostCategoryAnalysisSchema = z.object({
   solutionRequests: z.boolean().describe("Posts where people are seeking solutions for problems"),
@@ -18,7 +18,7 @@ const openai = new OpenAI({
   },
 });
 
-export async function categorizePost(post: RedditPost) {
+export async function categorizePost(post: RedditPostPartial) {
   const categoryDescriptions = Object.entries(PostCategoryAnalysisSchema.shape).map(([key, value]) => {
     return `${key}: ${value.description}`;
   }).join('\n');

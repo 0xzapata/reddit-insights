@@ -7,7 +7,7 @@ import * as schema from "./schema";
 config({ path: ".env" }); // or .env.local
 
 const client = createClient({
-  url: env.DATABASE_URL,
+  url: env.TURSO_CONNECTION_URL,
   authToken: env.TURSO_AUTH_TOKEN,
 });
 

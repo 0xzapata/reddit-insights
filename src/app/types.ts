@@ -1,5 +1,14 @@
 import type { Submission } from 'snoowrap'
 
+export interface RedditPostPartial {
+  title: string;
+  content: string;
+  score: number;
+  numComments: number;
+  createdAt: string;
+  url: string;
+}
+
 export interface RedditPost {
   title: string;
   content: string;
@@ -19,6 +28,6 @@ export interface PostCategory {
   moneyTalk: boolean;
 }
 
-export interface CategorizedPost extends RedditPost {
+export interface CategorizedPost extends RedditPostPartial {
   categories: PostCategory;
 }
